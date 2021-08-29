@@ -17,7 +17,6 @@ bot = commands.Bot(
     help_command=Help()
 )
 
-# TESTE
 
 @bot.is_owner
 @bot.command(aliases=['r'], hidden=True)
