@@ -31,10 +31,10 @@ class Assignments(commands.Cog, name='Tarefas'):
         self.logger.debug('Loading assignments...')
         self._load_groups()
         self.logger.debug('Assignments loaded!')
-        
-        when_to_update = self._calculate_update_dt()
+
+        when_to_update = self.last_update + timedelta(minutes=30)
         self.logger.debug(f'Updating at {when_to_update}')
-        
+
         await utils.wait_until(when_to_update)
 
     async def _list_assignments(self, ctx):
@@ -94,28 +94,6 @@ class Assignments(commands.Cog, name='Tarefas'):
 
         else:
             raise commands.errors.CommandInvokeError()
-
-    # calcula quando atualizar as tarefas
-    # é o menor entre 1 hora a partir do momento que a função for chamada ou o horário da tarefa mais próxima
-    def _calculate_update_dt(self):
-        now = datetime.now()
-        one_hour_from_now = now + timedelta(hours=1)
-
-        if not self.groups:
-            return one_hour_from_now
-
-        closest_assignment_dt = min(
-            a.dt
-            for group in self.groups
-            for a in group.assignments
-            if a.dt.replace(tzinfo=None) > now
-        )
-
-        # é necessario setar tzinfo pra None porque não é possível fazer comparações entre datetimes que tem tzinfo (como closest_assignment_dt) e que não tem (como one_hour_from_now)
-        return min(
-            closest_assignment_dt.replace(tzinfo=None),
-            one_hour_from_now
-        )
     
     def _load_groups(self):
         groups = load_assignment_groups()
