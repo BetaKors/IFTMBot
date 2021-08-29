@@ -54,9 +54,8 @@ class Assignment:
 
         # deixando a primeira letra de cada palavra da matéria maiúscula
         return ' '.join(
-            w.capitalize()
+            w.capitalize() if len(w) > 1 else w
             for w in subject.split()
-            if len(w) > 1
         ).replace('2d', '2D')  # caso especial para Programação e Animação 2D
 
     def _get_desc(self, soup):
