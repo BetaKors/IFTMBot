@@ -9,12 +9,12 @@ class HiddenCog(commands.Cog):
     pass
 
 
-def set_default_footer(embed):
-    embed.set_footer(text=f'IFTMBot | v{constants.VERSION}')
-
-
 async def wait_until(dt):
     await asyncio.sleep((dt - datetime.now()).total_seconds())
+
+
+def set_default_footer(embed):
+    embed.set_footer(text=f'IFTMBot | v{constants.VERSION}')
 
 
 def add_to_embed(embed, value):
