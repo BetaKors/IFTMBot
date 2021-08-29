@@ -18,7 +18,7 @@ class Assignments(commands.Cog, name='Tarefas'):
     def cog_unload(self):
         self.load_assignments.cancel()
     
-    @commands.command(aliases=['tarefas'])
+    @commands.command(name='tarefas')
     async def assignments(self, ctx, page: int=None):
         if page is None:
             await self._list_assignments(ctx)
