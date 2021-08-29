@@ -31,8 +31,8 @@ class Events(utils.HiddenCog):
         utils.set_default_footer(embed)
 
         embed.add_field(
-            name=f':x: {t.__name__} :x:',
-            value='Oops! Um erro ocorreu!'
+            name=f':x: ERRO :x:',
+            value=error
         )
 
 

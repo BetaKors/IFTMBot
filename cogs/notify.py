@@ -49,8 +49,12 @@ class Notify(commands.Cog, name='Aulas'):
                 name=c.name,
                 value='\n'.join(value)
             )
-
-        await ctx.reply(embed=embed)
+        
+        if embed.fields:
+            await ctx.reply(embed=embed)
+        
+        else:
+            raise commands.errors.CommandError()
     
     @commands.is_owner()
     @commands.command(aliases=['set'], hidden=True)
