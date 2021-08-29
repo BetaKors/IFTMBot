@@ -54,7 +54,7 @@ class Notify(commands.Cog, name='Aulas'):
             await ctx.reply(embed=embed)
         
         else:
-            raise commands.errors.CommandError()
+            raise commands.errors.CommandInvokeError()
     
     @commands.is_owner()
     @commands.command(aliases=['set'], hidden=True)
