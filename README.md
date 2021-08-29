@@ -4,3 +4,5 @@
 </p>
 
 Um bot do discord para coisas relacionadas a IFTM feito em Python.
+
+*Nota: alguns arquivos não estão incluídos por motivos de segurança.*
