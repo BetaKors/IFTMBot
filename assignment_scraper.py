@@ -17,7 +17,7 @@ def _get_assignments(driver):
     driver.get('https://ava.upt.iftm.edu.br/calendar/view.php')  # aba "eventos" do ava
     soup = BeautifulSoup(driver.page_source.encode('utf-8'), features='lxml')
     return [
-        assignment_helper.Assignment(str(div))
+        assignment.Assignment(str(div))
         for div in soup.find_all('div', class_='event mt-3')
     ]
 
@@ -47,7 +47,7 @@ def load_assignment_groups():
             assignments = _get_assignments(driver)
 
             groups.append(
-                assignment_helper.AssignmentGroup(course, assignments)
+                assignment.AssignmentGroup(course, assignments)
             )
 
     except:
