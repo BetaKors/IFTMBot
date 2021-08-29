@@ -60,7 +60,7 @@ class Assignments(commands.Cog, name='Tarefas'):
             )
 
         if embed.fields:
-            self._add_to_embed(embed, note1 + note2)
+            utils.add_to_embed(embed, note1 + note2)
 
             await ctx.reply(embed=embed)
         
@@ -88,20 +88,12 @@ class Assignments(commands.Cog, name='Tarefas'):
             )
 
         if embed.fields:
-            self._add_to_embed(embed, note)
+            utils.add_to_embed(embed, note)
 
             await ctx.reply(embed=embed)
 
         else:
             raise commands.errors.CommandInvokeError()
-    
-    def _add_to_embed(self, embed, val):
-        last_field = embed.fields[-1]
-        embed.set_field_at(
-            -1,
-            name=last_field.name,
-            value=last_field.value + val
-        )
 
     # calcula quando atualizar as tarefas
     # é o menor entre 1 hora a partir do momento que a função for chamada ou o horário da tarefa mais próxima
