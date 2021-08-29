@@ -5,6 +5,4 @@
 
 Um bot do discord para coisas relacionadas a IFTM feito em Python.
 
-<p style="font-size: 10pt;">
-    *Nota: alguns arquivos não estão incluídos por motivos de segurança.*
-</p>
+*Nota: alguns arquivos não estão incluídos por motivos de segurança.*
