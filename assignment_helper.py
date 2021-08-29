@@ -56,6 +56,7 @@ class Assignment:
         return ' '.join(
             w.capitalize()
             for w in subject.split()
+            if len(w) > 1
         ).replace('2d', '2D')  # caso especial para Programação e Animação 2D
 
     def _get_desc(self, soup):
