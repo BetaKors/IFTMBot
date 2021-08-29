@@ -6,6 +6,12 @@ from datetime import datetime
 
 
 class HiddenCog(commands.Cog):
+    """Igual a um Cog comum, mas não aparece na mensagem de ajuda."""
+    pass
+
+
+class IFTMBotError(commands.errors.CommandError):
+    """Usado para colocar mensagens de erro customizadas."""
     pass
 
 

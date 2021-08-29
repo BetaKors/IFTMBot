@@ -30,7 +30,11 @@ class Events(utils.HiddenCog):
     async def on_command_error(self, ctx, error):
         t = type(error)
         name = t.__name__
-        msg = self.error_msgs[name] if name in self.error_msgs.keys() else ''
+        msg = str(error)
+
+        if not isinstance(t, utils.IFTMBotError) or not msg:
+            if name in self.error_msgs.keys():
+                msg = self.error_msgs[name]
 
         embed = discord.Embed(color=0xff0000)
         utils.set_default_footer(embed)
