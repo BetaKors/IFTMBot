@@ -24,7 +24,7 @@ class Notify(commands.Cog, name='Aulas'):
         self.notify.cancel()
         self.update_courses.cancel()
 
-    @commands.command(aliases=['aulas'])
+    @commands.command(name='aulas')
     async def classes(self, ctx):
         embed = discord.Embed(color=0xf92659)
         utils.set_default_footer(embed)
