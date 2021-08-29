@@ -1,4 +1,4 @@
-import assignment_helper
+import assignment
 
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
