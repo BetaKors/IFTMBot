@@ -6,12 +6,15 @@ import utils
 from traceback import format_exception
 from discord.utils import get, find
 from discord.ext import commands
+from json import load
 
 
 class Events(utils.HiddenCog):
     def __init__(self, bot):
         self.bot = bot
         self.logger = logging.getLogger('IFTMBot')
+        with open('error_messages.json', 'r', encoding='utf-8') as f:
+            self.error_msgs = load(f)
     
     @commands.Cog.listener()
     async def on_ready(self):
@@ -26,7 +29,8 @@ class Events(utils.HiddenCog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         t = type(error)
-        msg = str(error)
+        name = t.__name__
+        msg = self.error_msgs[name] if name in self.error_msgs.keys() else ''
 
         embed = discord.Embed(color=0xff0000)
         utils.set_default_footer(embed)
