@@ -26,13 +26,14 @@ class Events(utils.HiddenCog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         t = type(error)
+        msg = str(error)
 
         embed = discord.Embed(color=0xff0000)
         utils.set_default_footer(embed)
 
         embed.add_field(
             name=f':x: ERRO :x:',
-            value=error
+            value=msg if msg else 'Oops! Algo deu errado!'
         )
 
 
