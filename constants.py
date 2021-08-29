@@ -1,0 +1,2 @@
+PREFIX = '*'
+VERSION = 1.4
