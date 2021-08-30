@@ -19,8 +19,10 @@ async def wait_until(dt):
     await asyncio.sleep((dt - datetime.now()).total_seconds())
 
 
-def utc_to_local(dt):
-    return dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
+def unix_timestamp_to_local_dt(timestamp):
+    utc_dt = datetime.utcfromtimestamp(int(timestamp))
+
+    return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
 
 def set_default_footer(embed):
