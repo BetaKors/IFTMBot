@@ -1,6 +1,7 @@
 from datetime import datetime, timezone, timedelta
 from dataclasses import dataclass
 from discord.utils import find
+from utils import utc_to_local
 from bs4 import BeautifulSoup
 
 
@@ -83,7 +84,7 @@ class Assignment:
         utc_dt = datetime.utcfromtimestamp(int(timestamp))
         
         # convertendo de UTC para o fuso-horário local (BRT)
-        return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        return utc_to_local(utc_dt)
     
     def _get_formatted_dt(self):
         r = ''
