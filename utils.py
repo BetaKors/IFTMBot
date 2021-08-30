@@ -1,8 +1,8 @@
 import constants
 import asyncio
 
+from datetime import datetime, timezone
 from discord.ext import commands
-from datetime import datetime
 
 
 class HiddenCog(commands.Cog):
@@ -17,6 +17,10 @@ class IFTMBotError(commands.errors.CommandError):
 
 async def wait_until(dt):
     await asyncio.sleep((dt - datetime.now()).total_seconds())
+
+
+def utc_to_local(dt):
+    return dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
 
 def set_default_footer(embed):
