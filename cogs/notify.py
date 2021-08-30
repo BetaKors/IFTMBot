@@ -108,7 +108,7 @@ class Notify(commands.Cog, name='Aulas'):
     @tasks.loop(seconds=1)
     async def update_courses(self):
         tomorrow = datetime.now() + timedelta(days=1)
-        midnight = tomorrow.replace(hour=0, minute=0, second=1)
+        midnight = tomorrow.replace(hour=0, minute=1, second=1)
 
         await utils.wait_until(midnight)
 
