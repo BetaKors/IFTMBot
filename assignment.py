@@ -1,11 +1,8 @@
-from utils import unix_timestamp_to_local_dt
-from datetime import datetime, timedelta
+import utils
+
 from dataclasses import dataclass
 from discord.utils import find
 from bs4 import BeautifulSoup
-
-
-months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 
 
 class Assignment:
@@ -16,7 +13,7 @@ class Assignment:
         self.subject      = self._get_subject(soup)
         self.description  = self._get_desc(soup)
         self.dt           = self._get_dt(soup)
-        self.formatted_dt = self._get_formatted_dt()
+        self.formatted_dt = utils.dt_as_formatted_str(self.dt)
     
     def get_value(self, note):
         subject = f'**Matéria**: {self.subject}\n\n'
@@ -80,26 +77,7 @@ class Assignment:
 
         timestamp = element[:index]
 
-        return unix_timestamp_to_local_dt(timestamp)
-    
-    def _get_formatted_dt(self):
-        r = ''
-        dt = self.dt
-        today = datetime.today()
-        tomorrow = today + timedelta(days=1)
-
-        if dt.date() == today.date():
-            r = 'Hoje'
-
-        elif dt.date() == tomorrow.date():
-            r = 'Amanhã'
-
-        else:
-            r = f'{dt.day} de {months[dt.month - 1]}'
-
-        time = dt.strftime('%H:%M')
-
-        return f'{r} às {time}'
+        return utils.unix_timestamp_to_local_dt(timestamp)
 
 
 @dataclass
