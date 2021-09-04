@@ -44,9 +44,10 @@ class Events(utils.HiddenCog):
             value=msg if msg else 'Oops! Algo deu errado!'
         )
 
-        self.logger.error(
-            '\n'.join(format_exception(t, error, error.__traceback__))
-        )
+        if t is not utils.IFTMBotError:
+            self.logger.error(
+                '\n'.join(format_exception(t, error, error.__traceback__))
+            )
 
         await ctx.send(embed=embed)
     
