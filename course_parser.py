@@ -1,3 +1,5 @@
+import utils
+
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 from discord.utils import find
@@ -44,17 +46,9 @@ class Course:
         class1 = self.get_class()   # aula de agora
         class2 = self.get_class(1)  # próxima aula
 
-        today_index = class1.dt.weekday()
-        next_index  = class2.dt.weekday()
-        m = ''
+        m = utils.dt_as_formatted_str(class2.dt).lower()
 
-        if next_index > today_index:
-            m = ' amanhã'
-
-        elif next_index < today_index:
-            m = f', segunda-feira,'
-
-        return f'**Aula:** {class1.name}\n**Link:** {class1.url}\n**Próxima aula:** {class2.name}{m} às {class2.dt.strftime("%H:%M")}'        
+        return f'**Aula:** {class1.name}\n**Link:** {class1.url}\n**Próxima aula:** {class2.name} {m}'        
 
     def _load_classes(self, data):
         # calendario.json descreve sabados letivos e dias que não tem aula
@@ -90,7 +84,10 @@ class Course:
         
         for time, info in data[next_school_day].items():
             if info:
-                dt = calculate_dt(time) + timedelta(days=1)  # o dia estará errado mas isso não importa já que recarregamos os cursos todo dia
+                days = 1
+                if today >= 4:  # se for sexta, sábado ou domingo precisamos calcular a o dia exato
+                    days = 7 - today
+                dt = calculate_dt(time) + timedelta(days=days)
                 return Class(info[0], info[1], dt)
 
 
