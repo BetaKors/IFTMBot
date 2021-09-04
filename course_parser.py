@@ -6,9 +6,6 @@ from discord.utils import find
 from json import load
 
 
-weekdays = ['segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo']
-
-
 class Course:
     def __init__(self, name, data):
         self.name = name
@@ -66,9 +63,9 @@ class Course:
                 weekday = c[now_date]
         
         else:
-            weekday = weekdays[today]
+            weekday = utils.weekdays[today]
 
-            if weekday not in weekdays[:5]:
+            if weekday not in utils.weekdays[:5]:
                 return []
 
         return [
@@ -79,8 +76,8 @@ class Course:
     # EU NÃO SEI DAR NOME PRA MÉTODOS
     def _get_next_school_day_first_class(self, data):
         today           = datetime.now().weekday()
-        index           = (today + 1) % len(weekdays[:5])
-        next_school_day = weekdays[index]
+        index           = (today + 1) % len(utils.weekdays[:5])
+        next_school_day = utils.weekdays[index]
         
         for time, info in data[next_school_day].items():
             if info:
