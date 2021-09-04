@@ -26,6 +26,12 @@ class Notify(commands.Cog, name='Aulas'):
 
     @commands.command(name='aulas')
     async def classes(self, ctx):
+        now = datetime.now()
+        weekday = now.weekday()
+
+        if weekday > 4:
+            raise utils.IFTMBotError('Hoje não tem aula!')
+
         embed = discord.Embed(color=0xf92659)
         utils.set_default_footer(embed)
 
