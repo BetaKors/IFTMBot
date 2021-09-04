@@ -104,7 +104,7 @@ class Assignments(commands.Cog, name='Tarefas'):
     def _load_groups(self):
         modified_unix_time = os.path.getmtime('./tarefas.pkl')
 
-        motified_dt = utils.unix_timestamp_to_local_dt(modified_unix_time)
+        motified_dt = utils.unix_timestamp_to_local_dt(modified_unix_time).replace(tzinfo=None)
         
         seconds_since = (datetime.now() - motified_dt).total_seconds()
         minutes_since = divmod(seconds_since, 60)[0]
