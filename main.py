@@ -29,13 +29,6 @@ async def reload(ctx):
     await ctx.message.delete()
 
 
-@bot.is_owner
-@bot.command(aliases=['update'], hidden=True)
-async def update_assignments(ctx):
-    bot.reload_extension('cogs.assignments')
-    await ctx.message.delete()
-
-
 def _load_reload():
     extensions = [
         f'cogs.{os.path.basename(file)[:-3]}'
@@ -50,10 +43,6 @@ def _load_reload():
 
     for extension in extensions:
         if extension in bot.extensions.keys():
-            # ignorando assignments.py no reload para que ele não fique abrindo o ava todo reload
-            if extension == 'cogs.assignments':
-                logger.debug('Ignoring the reload of cogs.assignments')
-                continue
             logger.debug(f'Reloading extension {extension}')
             bot.reload_extension(extension)        
         else:
