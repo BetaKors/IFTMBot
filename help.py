@@ -12,7 +12,12 @@ class Help(commands.HelpCommand):
     async def send_bot_help(self, mapping):
         embed = self._get_help_embed()
 
-        for cog, commands in mapping.items():
+        cogs = sorted(
+            mapping.items(),
+            key=lambda item: item[0].qualified_name if item[0] else 'Outros'
+        )
+
+        for cog, commands in cogs:
             if isinstance(cog, utils.HiddenCog):
                 continue
 
