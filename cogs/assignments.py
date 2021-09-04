@@ -1,6 +1,8 @@
 import logging
 import discord
+import pickle
 import utils
+import os
 
 from assignment_scraper import load_assignment_groups
 
@@ -16,8 +18,11 @@ class Assignments(commands.Cog, name='Tarefas'):
         self.load_assignments.start()
     
     def cog_unload(self):
+        if self.groups:
+            with open('tarefas.pkl', 'wb') as f:
+                pickle.dump(self.groups, f, pickle.HIGHEST_PROTOCOL)
         self.load_assignments.cancel()
-    
+
     @commands.command(name='tarefas')
     async def assignments(self, ctx, page: int=None):
         if page is None:
@@ -28,13 +33,14 @@ class Assignments(commands.Cog, name='Tarefas'):
     @tasks.loop(seconds=1)
     async def load_assignments(self):
         self.last_updated = datetime.now()
+
         self.logger.debug('Loading assignments...')
         self._load_groups()
         self.logger.debug('Assignments loaded!')
 
-        when_to_update = self.last_update + timedelta(minutes=30)
+        when_to_update = self.last_updated + timedelta(minutes=30)
+        
         self.logger.debug(f'Updating at {when_to_update}')
-
         await utils.wait_until(when_to_update)
 
     async def _list_assignments(self, ctx):
@@ -96,7 +102,18 @@ class Assignments(commands.Cog, name='Tarefas'):
             raise commands.errors.CommandInvokeError()
     
     def _load_groups(self):
-        groups = load_assignment_groups()
+        modified_unix_time = os.path.getmtime('./tarefas.pkl')
+
+        motified_dt = utils.unix_timestamp_to_local_dt(modified_unix_time)
+        
+        seconds_since = (datetime.now() - motified_dt).total_seconds()
+        minutes_since = divmod(seconds_since, 60)[0]
+
+        if minutes_since < 30:
+            with open('./tarefas.pkl', 'rb') as f:
+                groups =  pickle.load(f)
+        else:
+            groups = load_assignment_groups()
 
         # só atualize os grupos caso a lista groups tiver algo
         # se ela não tiver é porque algo deu errado, então mantenha os grupos que já estavam carregados (se eles estivessem carregados)
