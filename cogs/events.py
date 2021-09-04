@@ -32,7 +32,7 @@ class Events(utils.HiddenCog):
         name = t.__name__
         msg = str(error)
 
-        if not isinstance(t, utils.IFTMBotError) or not msg:
+        if t is not utils.IFTMBotError or not msg:
             if name in self.error_msgs.keys():
                 msg = self.error_msgs[name]
 
@@ -43,7 +43,6 @@ class Events(utils.HiddenCog):
             name=f':x: ERRO :x:',
             value=msg if msg else 'Oops! Algo deu errado!'
         )
-
 
         self.logger.error(
             '\n'.join(format_exception(t, error, error.__traceback__))
