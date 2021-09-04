@@ -29,7 +29,7 @@ class Notify(commands.Cog, name='Aulas'):
         embed = discord.Embed(color=0xf92659)
         utils.set_default_footer(embed)
 
-        fmt  = '• {} às {}'
+        fmt1  = '• {} às {}'
         fmt2 = '\\> **{} às {}**'
 
         now = datetime.now()
@@ -38,12 +38,15 @@ class Notify(commands.Cog, name='Aulas'):
             value = []
             
             for cl in c.classes:
-                time_since = (cl.dt - now).total_seconds() / 60
-                _fmt = fmt2 if time_since < 0 and time_since > -50 else fmt
+                minutes_since = divmod(
+                    (cl.dt - now).total_seconds(),
+                    60
+                )[0]
+                fmt = fmt2 if minutes_since < 0 and minutes_since > -50 else fmt1
 
                 t = cl.dt.strftime('%H:%M')
 
-                value.append(_fmt.format(cl.name, t))
+                value.append(fmt.format(cl.name, t))
 
             embed.add_field(
                 name=c.name,
