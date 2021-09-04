@@ -5,6 +5,7 @@ from datetime import datetime, timezone, timedelta
 from discord.ext import commands
 
 
+weekdays = ['segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo']
 months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 
 
