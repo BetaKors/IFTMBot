@@ -107,7 +107,7 @@ class Assignments(commands.Cog, name='Tarefas'):
         motified_dt = utils.unix_timestamp_to_local_dt(modified_unix_time).replace(tzinfo=None)
         
         seconds_since = (datetime.now() - motified_dt).total_seconds()
-        minutes_since = divmod(seconds_since, 60)[0]
+        minutes_since = seconds_since // 60
 
         if minutes_since < 30:
             with open('./tarefas.pkl', 'rb') as f:

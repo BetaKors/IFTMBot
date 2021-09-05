@@ -44,10 +44,8 @@ class Notify(commands.Cog, name='Aulas'):
             value = []
             
             for cl in c.classes:
-                minutes_since = divmod(
-                    (cl.dt - now).total_seconds(),
-                    60
-                )[0]
+                seconds_since = (cl.dt - now).total_seconds()
+                minutes_since = seconds_since // 60
                 fmt = fmt2 if minutes_since < 0 and minutes_since > -50 else fmt1
 
                 t = cl.dt.strftime('%H:%M')
