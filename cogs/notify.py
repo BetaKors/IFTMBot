@@ -2,6 +2,8 @@ import course_parser
 import discord
 import logging
 import utils
+import json
+import os
 
 from datetime import datetime, timedelta
 from discord.ext import commands, tasks
@@ -12,6 +14,7 @@ class Notify(commands.Cog, name='Aulas'):
     def __init__(self, bot):
         self.bot = bot
         self.logger = logging.getLogger('IFTMBot')
+        self.channels = self._load_channels()
         self.courses = course_parser.load_courses()
 
         _courses = ' | '.join(str(c) for c in self.courses)
@@ -21,6 +24,9 @@ class Notify(commands.Cog, name='Aulas'):
         self.update_courses.start()
 
     def cog_unload(self):
+        with open('./notify_channels.json', 'w+') as f:
+            json.dump(self.channels, f)
+
         self.notify.cancel()
         self.update_courses.cancel()
 
@@ -35,7 +41,7 @@ class Notify(commands.Cog, name='Aulas'):
         embed = discord.Embed(color=0xf92659)
         utils.set_default_footer(embed)
 
-        fmt1  = '• {} às {}'
+        fmt1 = '• {} às {}'
         fmt2 = '\\> **{} às {}**'
 
         now = datetime.now()
@@ -45,8 +51,9 @@ class Notify(commands.Cog, name='Aulas'):
             
             for cl in c.classes:
                 seconds_since = (cl.dt - now).total_seconds()
-                minutes_since = seconds_since // 60
-                fmt = fmt2 if minutes_since < 0 and minutes_since > -50 else fmt1
+                minutes_since = -seconds_since // 60
+
+                fmt = fmt2 if 0 < minutes_since < 50 else fmt1
 
                 t = cl.dt.strftime('%H:%M')
 
@@ -83,6 +90,34 @@ class Notify(commands.Cog, name='Aulas'):
 
         await ctx.message.delete()
         await last_notification.edit(embed=embed)
+    
+    @commands.is_owner()
+    @commands.command(aliases=['addchannel'], hidden=True)
+    async def add_channel(self, ctx):
+        id = ctx.channel.id
+
+        if id in self.channels:
+            raise utils.IFTMBotError('This channel is already on the list of channels to notify.')
+
+        else:
+            self.logger.debug(f'Adding channel with id {id} to list of channels to notify!')
+            self.channels.append(id)
+        
+        await ctx.message.delete()
+
+    @commands.is_owner()
+    @commands.command(aliases=['removechannel'], hidden=True)
+    async def remove_channel(self, ctx):
+        id = ctx.channel.id
+
+        if id not in self.channels:
+            raise utils.IFTMBotError('This channel is not on the list of channels to notify!')
+
+        else:
+            self.logger.debug(f'Removing channel with id {id} from list of channels to notify.')
+            self.channels.remove(id)
+        
+        await ctx.message.delete()
 
     @tasks.loop(seconds=1)
     async def notify(self):
@@ -104,13 +139,15 @@ class Notify(commands.Cog, name='Aulas'):
             )
 
         if embed.fields:
-            channel = find(
-                lambda c: 'aulas' in c.name,
-                get(self.bot.guilds, name='IFTM').text_channels
-            )
+            if self.channels:
+                for id in self.channels:
+                    channel = self.bot.get_channel(id)
+                    await channel.purge()
+                    await channel.send(embed=embed)
 
-            await channel.send(embed=embed)
-            self.logger.debug('Notified!')
+                self.logger.debug('Notified!')
+            else:
+                self.logger.warning('No channels to notify.')
 
     @tasks.loop(seconds=1)
     async def update_courses(self):
@@ -127,6 +164,15 @@ class Notify(commands.Cog, name='Aulas'):
         self.logger.debug(f'Updated courses: {courses}')
         
         self.notify.restart()
+
+    def _load_channels(self):
+        path = './notify_channels.json'
+        
+        if os.path.exists(path):
+            with open(path, 'r') as f:
+                return json.load(f)
+        
+        return []
 
 
 def setup(bot):
