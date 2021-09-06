@@ -100,18 +100,21 @@ class Assignments(commands.Cog, name='Tarefas'):
 
         else:
             raise commands.errors.CommandInvokeError()
-    
-    def _load_groups(self):
-        modified_unix_time = os.path.getmtime('./tarefas.pkl')
 
-        motified_dt = utils.unix_timestamp_to_local_dt(modified_unix_time).replace(tzinfo=None)
+    def _load_groups(self):
+        if os.path.exists('./tarefas.pkl'):
+            modified_unix_time = os.path.getmtime('./tarefas.pkl')
+
+            motified_dt = utils.unix_timestamp_to_local_dt(modified_unix_time).replace(tzinfo=None)
+            
+            seconds_since = (datetime.now() - motified_dt).total_seconds()
+            minutes_since = seconds_since // 60
         
-        seconds_since = (datetime.now() - motified_dt).total_seconds()
-        minutes_since = seconds_since // 60
+        else:
+            minutes_since = 0
 
         if minutes_since < 30:
-            with open('./tarefas.pkl', 'rb') as f:
-                groups =  pickle.load(f)
+            groups = self._load_save()
         else:
             groups = load_assignment_groups()
 
@@ -119,7 +122,9 @@ class Assignments(commands.Cog, name='Tarefas'):
         # se ela não tiver é porque algo deu errado, então mantenha os grupos que já estavam carregados (se eles estivessem carregados)
         if not self.groups or groups:
             self.groups = groups
-        
+        else:
+            self.groups = self._load_save()
+
         if self.groups:
             self.page_number = max(
                 len(group.assignments)
@@ -128,6 +133,10 @@ class Assignments(commands.Cog, name='Tarefas'):
         
         else:
             self.page_number = -1
+
+    def _load_save():
+        with open('./tarefas.pkl', 'rb') as f:
+            return pickle.load(f)
 
 
 def setup(bot):
