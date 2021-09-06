@@ -25,10 +25,14 @@ async def wait_until(dt):
 
 def dt_as_formatted_str(dt):
     r = ''
-    today = datetime.today()
-    tomorrow = today + timedelta(days=1)
+    today     = datetime.today()
+    yesterday = today - timedelta(days=1)
+    tomorrow  = today + timedelta(days=1)
 
-    if dt.date() == today.date():
+    if dt.date() == yesterday.date():
+        r = 'Ontem'
+
+    elif dt.date() == today.date():
         r = 'Hoje'
 
     elif dt.date() == tomorrow.date():
