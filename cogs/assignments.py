@@ -45,7 +45,7 @@ class Assignments(commands.Cog, name='Tarefas'):
 
     async def _list_assignments(self, ctx):
         note1 = '\n`*tarefas <página>` para mais informações\n'
-        note2 = f'\n`Atualizado pela última vez às {self.last_updated.strftime("%H:%M:%S")}`'
+        note2 = f'\n`Atualizado pela última vez {utils.dt_as_formatted_str(self.last_updated).lower()}`'
 
         embed = discord.Embed(
             title='Lista de tarefas',
