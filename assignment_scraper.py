@@ -1,6 +1,8 @@
 import assignment
 
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from subprocess import CREATE_NO_WINDOW
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from json import load
@@ -28,15 +30,18 @@ def _get_cpfs():
 
 
 def load_assignment_groups():
+    service = Service('C:\Program Files (x86)\chromedriver.exe')
+    service.creationflags = CREATE_NO_WINDOW  # esconde o console do selenium
+
     options = Options()
     options.add_argument('--headless')  # esconde a janela do browser
     options.add_experimental_option('excludeSwitches', ['enable-logging'])  # suprimindo uma mensagem que normalmente aparece no console
     
     driver = webdriver.Chrome(
-        executable_path='C:\Program Files (x86)\chromedriver.exe',
+        service=service,
         options=options
     )
-    
+
     groups = []
     cpfs = _get_cpfs()
 
