@@ -25,7 +25,10 @@ class Notify(commands.Cog, name='Aulas'):
 
     def cog_unload(self):
         with open('./notify_channels.json', 'w+') as f:
-            json.dump(self.channels, f)
+            json.dump(
+                [c for c in self.channels if c],
+                f
+            )
 
         self.notify.cancel()
         self.update_courses.cancel()
@@ -215,8 +218,8 @@ class Notify(commands.Cog, name='Aulas'):
         
         if os.path.exists(path):
             with open(path, 'r') as f:
-                return json.load(f)
-        
+                return [id for id in json.load(f) if id]
+
         return []
     
     def _convert_course(self, course):
