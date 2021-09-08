@@ -46,6 +46,10 @@ def dt_as_formatted_str(dt):
     return f'{r} às {time}'
 
 
+def dt_to_weekday(dt):
+    return weekdays[dt.weekday()]
+
+
 def unix_timestamp_to_local_dt(timestamp):
     utc_dt = datetime.utcfromtimestamp(int(timestamp))
 
