@@ -74,8 +74,10 @@ class Assignments(commands.Cog, name='Tarefas'):
             raise commands.errors.CommandInvokeError()
 
     async def _assignment_info(self, ctx, page: int):
-        last_updated_time = self.last_updated.strftime('%H:%M:%S')
-        note = f'\n\n`Atualizado pela última vez às {last_updated_time}`'
+        if page > self.page_number or page < 0:
+            raise utils.IFTMBotError('Essa página não existe!')
+
+        note = f'\n\n`Atualizado pela última vez às {utils.dt_as_formatted_str(self.last_updated)}`'
       
         embed = discord.Embed(
             title=f'Tarefas (Página {page} de {self.page_number})',
@@ -85,6 +87,9 @@ class Assignments(commands.Cog, name='Tarefas'):
         utils.set_default_footer(embed)
 
         for group in self.groups:
+            if len(group.assignments) < page:
+                continue
+
             # determina se a nota será adicionada ou não (sim se o grupo for o último da lista)
             n = note if group == self.groups[-1] else ''
 
@@ -134,7 +139,7 @@ class Assignments(commands.Cog, name='Tarefas'):
         else:
             self.page_number = -1
 
-    def _load_save():
+    def _load_save(self):
         with open('./tarefas.pkl', 'rb') as f:
             return pickle.load(f)
 
