@@ -30,12 +30,11 @@ class Notify(commands.Cog, name='Aulas'):
         self.notify.cancel()
         self.update_courses.cancel()
 
-    @commands.command(name='aulas')
-    async def classes(self, ctx):
-        now = datetime.now()
-        weekday = now.weekday()
+    @commands.command(name='aulas', aliases=['hoje'])
+    async def classes(self, ctx, course=None):
+        _courses = self._convert_course(course)
 
-        if weekday > 4:
+        if not any(bool(c.classes) for c in _courses):
             raise utils.IFTMBotError('Hoje não tem aula!')
 
         embed = discord.Embed(color=0xf92659)
@@ -46,7 +45,7 @@ class Notify(commands.Cog, name='Aulas'):
 
         now = datetime.now()
 
-        for c in self.courses:
+        for c in _courses:
             value = []
             
             for cl in c.classes:
@@ -69,6 +68,49 @@ class Notify(commands.Cog, name='Aulas'):
         
         else:
             raise commands.errors.CommandInvokeError()
+    
+    @commands.command(name='amanha', aliases=['amanhã'])
+    async def tomorrow_classes(self, ctx, course=None):
+        embed = discord.Embed(color=0xf92659)
+        utils.set_default_footer(embed)
+
+        _courses = self._convert_course(course)
+        
+        tomorrow  = datetime.now() + timedelta(days=1)
+        add_note  = False
+        day       = None
+
+        for c in _courses:
+            value = []
+
+            for cl in c.tomorrow_classes:
+                if cl.dt.date() != tomorrow.date():
+                    add_note = True
+                    day = cl.dt.strftime('%d/%m')
+
+                t = cl.dt.strftime('%H:%M')
+                
+                value.append(
+                    f'• {cl.name} às {t}'
+                )
+
+            embed.add_field(
+                name=c.name,
+                value='\n'.join(value)
+            )
+
+        if add_note:
+            utils.add_to_embed(
+                embed, 
+                f'`*Já que amanhã não tem aula, as aulas mostradas são do dia {day}`'
+            )
+
+        if embed.fields:
+            await ctx.reply(embed=embed)
+
+        else:
+            raise commands.errors.CommandInvokeError()
+
     
     @commands.is_owner()
     @commands.command(aliases=['set'], hidden=True)
@@ -133,6 +175,9 @@ class Notify(commands.Cog, name='Aulas'):
         utils.set_default_footer(embed)
 
         for c in self.courses:
+            if not c.classes:
+                continue
+
             embed.add_field(
                 name=c.name,
                 value=c.get_notify_value()
@@ -173,6 +218,23 @@ class Notify(commands.Cog, name='Aulas'):
                 return json.load(f)
         
         return []
+    
+    def _convert_course(self, course):
+        if course:
+            _courses = [
+                get(
+                    self.courses,
+                    name=course.upper()
+                )
+            ]
+
+            if not _courses[0]:
+                raise utils.IFTMBotError(f'Curso com o nome de {course} não foi encontrado.')
+
+        else:
+            _courses = self.courses
+
+        return _courses
 
 
 def setup(bot):
