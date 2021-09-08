@@ -9,8 +9,9 @@ from json import load
 class Course:
     def __init__(self, name, data):
         self.name = name
-        self.classes = self._load_classes(data)
-        self.next_school_day_first_class = self._get_next_school_day_first_class(data)
+        self.classes = self._load_today_classes(data)
+        # "tomorrow" não é necessariamente amanhã, mas sim uma forma mais fácil de se referir ao próximo dia de aula
+        self.tomorrow_classes = self._load_tomorrow_classes(data)
 
     def __str__(self):
         classes = ', '.join(c.name for c in self.classes)
@@ -25,10 +26,10 @@ class Course:
         ]
 
         if offset >= len(classes):
-            return self.next_school_day_first_class
+            return self.tomorrow_classes[0]
 
         return sorted(classes, key=lambda c: c.dt)[offset]
-    
+
     def get_next_class_dt(self):
         now = datetime.now()
 
@@ -37,7 +38,13 @@ class Course:
             self.classes
         )
 
-        return c.dt if c else self.next_school_day_first_class.dt 
+        if not c:
+            if self.tomorrow_classes:
+                c = self.tomorrow_classes[0]
+            else:
+                return now + timedelta(days=2)
+
+        return c.dt
 
     def get_notify_value(self):
         class1 = self.get_class()   # aula de agora
@@ -47,45 +54,69 @@ class Course:
 
         return f'**Aula:** {class1.name}\n**Link:** {class1.url}\n**Próxima aula:** {class2.name} {m}'        
 
-    def _load_classes(self, data):
-        # calendario.json descreve sabados letivos e dias que não tem aula
-        with open('./calendario.json', 'r', encoding='utf-8') as f:
-            c = load(f)
+    def _load_today_classes(self, data):
+        calendar = self._load_calendar()
 
-        now      = datetime.now()
-        today    = now.weekday()
-        now_date = now.strftime('%Y-%m-%d')
+        today    = datetime.today()
+        str_date = today.strftime('%Y-%m-%d')
 
-        if now_date in c.keys():
-            if c[now_date] == 'não tem aula':
+        if str_date in calendar.keys():
+            if calendar[str_date] == 'não tem aula':
                 return []
             else:
-                weekday = c[now_date]
-        
+                weekday = calendar[str_date]
+
         else:
-            weekday = utils.weekdays[today]
+            weekday = utils.dt_to_weekday(today)
 
             if weekday not in utils.weekdays[:5]:
                 return []
 
         return [
-            Class(info[0], info[1], calculate_dt(time))
+            Class(info[0], info[1], self._calculate_class_dt(datetime.now(), time))
             for time, info in data[weekday].items() if info
         ]
 
-    # EU NÃO SEI DAR NOME PRA MÉTODOS
-    def _get_next_school_day_first_class(self, data):
-        today           = datetime.now().weekday()
-        index           = (today + 1) % len(utils.weekdays[:5])
-        next_school_day = utils.weekdays[index]
-        
-        for time, info in data[next_school_day].items():
-            if info:
-                days = 1
-                if today >= 4:  # se for sexta, sábado ou domingo precisamos calcular a o dia exato
-                    days = 7 - today
-                dt = calculate_dt(time) + timedelta(days=days)
-                return Class(info[0], info[1], dt)
+    def _load_tomorrow_classes(self, data):
+        dt      = self._find_tomorrow_dt()
+        weekday = utils.dt_to_weekday(dt)
+
+        return [
+            Class(info[0], info[1], self._calculate_class_dt(dt, time))
+            for time, info in data[weekday].items() if info
+        ]
+
+    def _find_tomorrow_dt(self):
+        calendar = self._load_calendar()
+
+        today      = datetime.today()
+        current_dt = today + timedelta(days=1)
+
+        while True:
+            str_date = current_dt.strftime('%Y-%m-%d')
+
+            if str_date in calendar.keys():
+                if calendar[str_date] != 'não tem aula':
+                    return current_dt
+            
+            else:
+                if utils.dt_to_weekday(current_dt) in utils.weekdays[:5]:
+                    return current_dt
+
+            current_dt += timedelta(days=1)
+    
+    def _load_calendar(self):
+        # calendario.json descreve sabados letivos e dias que não tem aula
+        with open('./calendario.json', 'r', encoding='utf-8') as f:
+            return load(f)
+    
+    def _calculate_class_dt(self, dt, time):
+        return dt.replace(
+            hour=int(time[:2]),
+            minute=int(time[-2:]),
+            second=0,
+            microsecond=0
+        )
 
 
 @dataclass
@@ -93,15 +124,6 @@ class Class:
     name: str
     url : str
     dt  : datetime
-
-
-def calculate_dt(time):
-    return datetime.now().replace(
-        hour=int(time[:2]),
-        minute=int(time[-2:]),
-        second=0,
-        microsecond=0
-    )
 
 
 def load_courses():
