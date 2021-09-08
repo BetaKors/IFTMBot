@@ -30,7 +30,9 @@ def _get_cpfs():
 
 
 def load_assignment_groups():
-    service = Service('C:\Program Files (x86)\chromedriver.exe')
+    service = Service(
+        executable_path='C:\Program Files (x86)\chromedriver.exe'
+    )
     service.creationflags = CREATE_NO_WINDOW  # esconde o console do selenium
 
     options = Options()
