@@ -2,6 +2,7 @@ import assignment
 
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 from subprocess import CREATE_NO_WINDOW
 from selenium import webdriver
 from bs4 import BeautifulSoup
@@ -10,9 +11,9 @@ from json import load
 
 def _login(driver, cpf):
     driver.get('https://ava.upt.iftm.edu.br/login/index.php')
-    driver.find_element_by_id('username').send_keys(f'{cpf}')
-    driver.find_element_by_id('password').send_keys(f'Upt@{cpf}')
-    driver.find_element_by_id('loginbtn').click()
+    driver.find_element(By.ID, 'username').send_keys(f'{cpf}')
+    driver.find_element(By.ID, 'password').send_keys(f'Upt@{cpf}')
+    driver.find_element(By.ID, 'loginbtn').click()
 
 
 def _get_assignments(driver):
