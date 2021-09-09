@@ -74,7 +74,7 @@ class Assignments(commands.Cog, name='Tarefas'):
             raise commands.errors.CommandInvokeError()
 
     async def _assignment_info(self, ctx, page: int):
-        if page > self.page_number or page < 0:
+        if page <= 0 or page > self.page_number:
             raise utils.IFTMBotError('Essa página não existe!')
 
         note = f'\n\n`Atualizado pela última vez às {utils.dt_as_formatted_str(self.last_updated)}`'
