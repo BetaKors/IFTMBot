@@ -105,7 +105,7 @@ class Notify(commands.Cog, name='Aulas'):
         if add_note:
             utils.add_to_embed(
                 embed, 
-                f'`*Já que amanhã não tem aula, as aulas mostradas são do dia {day}`'
+                f'\n\n`Já que amanhã não tem aula, as aulas mostradas são do dia {day}.`'
             )
 
         if embed.fields:
