@@ -13,13 +13,12 @@ class Assignment:
         self.subject      = self._get_subject(soup)
         self.description  = self._get_desc(soup)
         self.dt           = self._get_dt(soup)
-        self.formatted_dt = utils.dt_as_formatted_str(self.dt)
     
     def get_value(self, note):
         subject = f'**Matéria**: {self.subject}\n\n'
         title   = f'**Título**: {self.title}\n\n'
         desc    = f'**Descrição**: {self.description}\n\n'
-        date    = f'**Data de entrega**: {self.formatted_dt}'
+        date    = f'**Data de entrega**: {utils.dt_as_formatted_str(self.dt)}'
 
         value = subject + title + desc + date
 
