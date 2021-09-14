@@ -74,7 +74,7 @@ class Assignments(commands.Cog, name='Tarefas'):
             raise commands.errors.CommandInvokeError()
 
     async def _assignment_info(self, ctx, page: int):
-        if page <= 0 or page > self.page_number:
+        if page > self.page_number:
             raise utils.IFTMBotError('Essa página não existe!')
 
         note = f'\n\n`Atualizado pela última vez às {utils.dt_as_formatted_str(self.last_updated)}`'
@@ -130,6 +130,8 @@ class Assignments(commands.Cog, name='Tarefas'):
         else:
             self.groups = self._load_save()
 
+        self._clean_assignments()
+
         if self.groups:
             self.page_number = max(
                 len(group.assignments)
@@ -138,6 +140,16 @@ class Assignments(commands.Cog, name='Tarefas'):
         
         else:
             self.page_number = -1
+
+    def _clean_assignments(self):
+        # quando o ava fica offline o bot não consegue atualizar as tarefas,
+        # então precisamos fazer isso para limpar as tarefas que já passaram
+        now = datetime.now().date()
+        for group in self.groups:
+            for a in reversed(group.assignments):
+                if a.dt.replace(tzinfo=None).date() < now:
+                    group.assignments.remove(a)
+
 
     def _load_save(self):
         with open('./tarefas.pkl', 'rb') as f:
