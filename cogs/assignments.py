@@ -145,6 +145,7 @@ class Assignments(commands.Cog, name='Tarefas'):
         # quando o ava fica offline o bot não consegue atualizar as tarefas,
         # então precisamos fazer isso para limpar as tarefas que já passaram
         now = datetime.now().date()
+        
         for group in self.groups:
             for a in reversed(group.assignments):
                 if a.dt.replace(tzinfo=None).date() < now:
