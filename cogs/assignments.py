@@ -54,7 +54,7 @@ class Assignments(commands.Cog, name='Tarefas'):
 
         utils.set_default_footer(embed)
         
-        for group in self.groups[:5]:
+        for group in self.groups:
             value = ''.join(
                 f'\n**[{a.dt.strftime("%d/%m")}] {a.subject}: {a.title}**\n'
                 for a in group.assignments
@@ -74,7 +74,7 @@ class Assignments(commands.Cog, name='Tarefas'):
             raise commands.errors.CommandInvokeError()
 
     async def _assignment_info(self, ctx, page: int):
-        if page > self.page_number:
+        if page <= 0 or page > self.page_number:
             raise utils.IFTMBotError('Essa página não existe!')
 
         note = f'\n\n`Atualizado pela última vez às {utils.dt_as_formatted_str(self.last_updated)}`'
@@ -144,11 +144,11 @@ class Assignments(commands.Cog, name='Tarefas'):
     def _clean_assignments(self):
         # quando o ava fica offline o bot não consegue atualizar as tarefas,
         # então precisamos fazer isso para limpar as tarefas que já passaram
-        now = datetime.now().date()
+        now = datetime.now()
         
         for group in self.groups:
             for a in reversed(group.assignments):
-                if a.dt.replace(tzinfo=None).date() < now:
+                if a.dt.replace(tzinfo=None) < now:
                     group.assignments.remove(a)
 
 
