@@ -1,5 +1,6 @@
 import discord
 import aiohttp
+import asyncio
 
 from utils import set_default_footer
 
@@ -34,9 +35,14 @@ class IFTM(commands.Cog):
         await ctx.reply(embed=embed)
 
     async def _ping_website(self, name, url):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                status = response.status == 200
+        timeout = aiohttp.ClientTimeout(total=3)
+        
+        try:
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with session.get(url) as response:
+                    status = response.status == 200
+        except asyncio.TimeoutError:
+            status = False
 
         emoji = ':white_check_mark:' if status else ':x:'
         msg = 'ONLINE' if status else 'OFFLINE'
