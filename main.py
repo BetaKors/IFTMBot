@@ -8,6 +8,7 @@ from discord.ext import commands
 from time import perf_counter
 from help import Help
 
+
 logger = logging.getLogger('IFTMBot')
 log.setup_logger()
 
