@@ -59,7 +59,7 @@ def load_assignment_groups():
             )
 
     except:
-        raise
+        pass
 
     finally:  # tendo certeza que driver.quit() é chamado * toda vez *
         driver.quit()
