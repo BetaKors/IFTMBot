@@ -24,19 +24,19 @@ def color(text, color):
 
 colors = {
     'BOLD_RED': '\x1b[31;1m',
-    'WHITE': '\x1b[38;21m',
-    'YELLOW': '\033[93m',
-    'GREEN': '\033[92m',
-    'RESET': '\x1b[0m',
-    'CYAN': '\033[96m',
-    'RED': '\033[91m'
+    'WHITE'   : '\x1b[38;21m',
+    'YELLOW'  : '\033[93m',
+    'GREEN'   : '\033[92m',
+    'RESET'   : '\x1b[0m',
+    'CYAN'    : '\033[96m',
+    'RED'     : '\033[91m'
 }
 
 formats = {
-    logging.DEBUG: colors['GREEN'],
-    logging.INFO: colors['WHITE'],
-    logging.WARNING: colors['YELLOW'],
-    logging.ERROR: colors['RED'],
+    logging.DEBUG   : colors['GREEN'],
+    logging.INFO    : colors['WHITE'],
+    logging.WARNING : colors['YELLOW'],
+    logging.ERROR   : colors['RED'],
     logging.CRITICAL: colors['BOLD_RED']
 }
 
