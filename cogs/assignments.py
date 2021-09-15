@@ -55,6 +55,13 @@ class Assignments(commands.Cog, name='Tarefas'):
         utils.set_default_footer(embed)
         
         for group in self.groups:
+            if not group.assignments:
+                embed.add_field(
+                    name=group.course_name,
+                    value='`Não há tarefas para este curso.`\n'
+                )
+                continue
+
             value = ''.join(
                 f'\n**[{a.dt.strftime("%d/%m")}] {a.subject}: {a.title}**\n'
                 for a in group.assignments
