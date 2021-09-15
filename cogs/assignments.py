@@ -78,7 +78,7 @@ class Assignments(commands.Cog, name='Tarefas'):
             await ctx.reply(embed=embed)
         
         else:
-            raise commands.errors.CommandInvokeError()
+            raise utils.IFTMBotError('Não há nenhum curso carregado.')
 
     async def _assignment_info(self, ctx, page: int):
         if page <= 0 or page > self.page_number:
@@ -111,7 +111,7 @@ class Assignments(commands.Cog, name='Tarefas'):
             await ctx.reply(embed=embed)
 
         else:
-            raise commands.errors.CommandInvokeError()
+            raise utils.IFTMBotError('Não há nenhum curso carregado.')
 
     def _load_groups(self):
         if os.path.exists('./tarefas.pkl'):
