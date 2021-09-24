@@ -34,6 +34,7 @@ def load_assignment_groups():
     service = Service(
         executable_path='C:\Program Files (x86)\chromedriver.exe'
     )
+
     service.creationflags = CREATE_NO_WINDOW  # esconde o console do selenium
 
     options = Options()
@@ -46,7 +47,7 @@ def load_assignment_groups():
     )
 
     groups = []
-    cpfs = _get_cpfs()
+    cpfs   = _get_cpfs()
 
     try:
         for course, cpf in cpfs.items():
