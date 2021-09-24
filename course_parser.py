@@ -78,15 +78,14 @@ class Course:
         ]
 
     def _load_tomorrow_classes(self, data):
-        dt      = self._find_tomorrow_dt()
-        weekday = utils.dt_to_weekday(dt)
+        dt, weekday = self._find_tomorrow_dt_weekday()
 
         return [
             Class(info[0], info[1], self._calculate_class_dt(dt, time))
             for time, info in data[weekday].items() if info
         ]
 
-    def _find_tomorrow_dt(self):
+    def _find_tomorrow_dt_weekday(self):
         calendar = self._load_calendar()
 
         today      = datetime.today()
@@ -97,11 +96,12 @@ class Course:
 
             if str_date in calendar.keys():
                 if calendar[str_date] != 'não tem aula':
-                    return current_dt
-            
+                    return current_dt, calendar[str_date]
+
             else:
-                if utils.dt_to_weekday(current_dt) in utils.weekdays[:5]:
-                    return current_dt
+                weekday = utils.dt_to_weekday(current_dt)
+                if weekday in utils.weekdays[:5]:
+                    return current_dt, weekday
 
             current_dt += timedelta(days=1)
     
